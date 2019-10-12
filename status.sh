@@ -4,28 +4,35 @@
 #
 # check if on ac and assign icons
 #
-bat=""
-baticon=""
-b0=$(cat /sys/class/power_supply/BAT0/capacity)
-b1=$(cat /sys/class/power_supply/BAT1/capacity)
-bat=$(( ($b0+$b1)/2 ))
-if [ $bat -lt 10 ]; then	
-	baticon=""
-elif [ $bat -ge 10 ] && [ $bat -lt 25 ]; then
-	baticon=""
-elif [ $bat -ge 25 ] && [ $bat -lt 50 ]; then
-	baticon=""
-elif [ $bat -ge 50 ] && [ $bat -lt 75 ]; then
-	baticon=""
+#bat=""
+#baticon=""
+if  [ -d /sys/class/power_supply/BAT0 ]; then
+	b0=$(cat /sys/class/power_supply/BAT0/capacity)
+	b1=$(cat /sys/class/power_supply/BAT1/capacity)
+	bat=$(( ($b0+$b1)/2 ))
+	if [ $bat -lt 10 ]; then	
+		baticon=""
+	elif [ $bat -ge 10 ] && [ $bat -lt 25 ]; then
+		baticon=""
+	elif [ $bat -ge 25 ] && [ $bat -lt 50 ]; then
+		baticon=""
+	elif [ $bat -ge 50 ] && [ $bat -lt 75 ]; then
+		baticon=""
+	else	
+		baticon=""
+	fi
+	
+	if [ "$(cat /sys/class/power_supply/AC/online)" = "1" ];then
+		baticon=""
+	fi
+	bat=$bat%
 else
-	baticon=""
-fi
-
-
-if [ "$(cat /sys/class/power_supply/AC/online)" = "1" ];then
-	baticon=""
+	bat="Plugged in"
+	baticon=""
 fi
 #
+
+##
 #--------!battery
 
 #---------ethernet
@@ -35,8 +42,8 @@ fi
 #
 net=""
 neticon=""
-eth="enp0s31f6"
-wlan="wlp3s0"
+eth="eno1"
+wlan="wlp9s0"
 if [ "$(cat /sys/class/net/$eth/carrier)" = "0" ]; then
 	#
 	# if wlan has no connection too
@@ -47,7 +54,7 @@ if [ "$(cat /sys/class/net/$eth/carrier)" = "0" ]; then
 		neticon=" "
 	else
 		net="Not connected"
-		neticon=""
+		neticon=""
 	fi
 else
 	#net="$(ip addr show $eth | grep inet | awk 'NR==1{print $2}')"
@@ -89,4 +96,4 @@ fi
 
 
 # set given values
-echo "[ $neticon$net ] [ $volicon $vol% ] [ $baticon $bat% ] | $(date '+%a %d %b %Y - %H:%M')"
+echo "[ $neticon$net ] [ $volicon $vol% ] [ $baticon $bat ] | $(date '+%a %d %b %Y - %H:%M')"

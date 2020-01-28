@@ -42,8 +42,11 @@ fi
 #
 net=""
 neticon=""
-eth="eno1"
-wlan="wlp9s0"
+
+eth="enp0s31f6"
+wlan="wlp3s0"
+
+
 if [ "$(cat /sys/class/net/$eth/carrier)" = "0" ]; then
 	#
 	# if wlan has no connection too
@@ -53,11 +56,11 @@ if [ "$(cat /sys/class/net/$eth/carrier)" = "0" ]; then
 
 		neticon=" "
 	else
-		net="Not connected"
-		neticon=""
+		net=" Not connected"
+		neticon=""
 	fi
 else
-	#net="$(ip addr show $eth | grep inet | awk 'NR==1{print $2}')"
+	net="$eth"
 	neticon=""
 fi
 #
